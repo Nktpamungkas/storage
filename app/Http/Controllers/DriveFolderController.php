@@ -88,7 +88,14 @@ class DriveFolderController extends Controller
 
         $parentId = $folder->parent_id;
 
-        $folder->delete();
+        $foldersById = $request->user()->driveFolders()
+            ->whereIn('id', $folderIds)
+            ->get()
+            ->keyBy('id');
+
+        foreach (array_reverse($folderIds) as $folderId) {
+            $foldersById->get($folderId)?->delete();
+        }
 
         return redirect()
             ->route('dashboard', $this->folderContext($parentId))

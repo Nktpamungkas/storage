@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('drive_folders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('parent_id')->nullable()->constrained('drive_folders')->cascadeOnDelete();
+            $table->foreignId('parent_id')->nullable()->constrained('drive_folders');
             $table->string('name', 120);
             $table->timestamps();
 
