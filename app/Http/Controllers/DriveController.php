@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class DriveController extends Controller
@@ -32,6 +33,10 @@ class DriveController extends Controller
             ->orderBy('name')
             ->get();
 
+        $diskRoot = Storage::disk('local')->path('');
+        $diskFree = @disk_free_space($diskRoot);
+        $diskTotal = @disk_total_space($diskRoot);
+
         return view('drive.index', [
             'breadcrumbs' => $currentFolder?->breadcrumbs() ?? collect(),
             'currentFolder' => $currentFolder,
@@ -44,6 +49,8 @@ class DriveController extends Controller
                 'file_count' => $user->driveFiles()->count(),
                 'folder_count' => $user->driveFolders()->count(),
                 'storage_used' => (int) $user->driveFiles()->sum('size'),
+                'disk_free' => $diskFree !== false ? (int) $diskFree : null,
+                'disk_total' => $diskTotal !== false ? (int) $diskTotal : null,
             ],
         ]);
     }

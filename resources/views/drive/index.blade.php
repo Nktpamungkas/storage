@@ -6,7 +6,11 @@
         ));
     };
 
-    $formatBytes = function (int $bytes): string {
+    $formatBytes = function (?int $bytes): string {
+        if ($bytes === null) {
+            return 'N/A';
+        }
+
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
         $bytes = max($bytes, 0);
 

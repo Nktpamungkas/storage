@@ -27,8 +27,19 @@
     <section class="surface-panel p-5">
         <div class="grid gap-3">
             <div class="stat-tile">
-                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Storage used</p>
-                <p class="mt-2 text-2xl font-semibold text-slate-900">{{ $formatBytes($stats['storage_used']) }}</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Free VPS disk</p>
+                <p class="mt-2 text-2xl font-semibold text-slate-900">{{ $formatBytes($stats['disk_free']) }}</p>
+                <p class="mt-2 text-xs text-slate-500">Sisa ruang partisi server tempat file storage ini disimpan.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="stat-tile">
+                    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">App files</p>
+                    <p class="mt-2 text-xl font-semibold text-slate-900">{{ $formatBytes($stats['storage_used']) }}</p>
+                </div>
+                <div class="stat-tile">
+                    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Total disk</p>
+                    <p class="mt-2 text-xl font-semibold text-slate-900">{{ $formatBytes($stats['disk_total']) }}</p>
+                </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
                 <div class="stat-tile">
