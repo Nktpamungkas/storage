@@ -30,7 +30,20 @@
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Free VPS disk</p>
                 <p class="mt-2 text-2xl font-semibold text-slate-900">{{ $formatBytes($stats['disk_free']) }}</p>
                 <p class="mt-2 text-xs text-slate-500">Sisa ruang partisi server tempat file storage ini disimpan.</p>
+
+                <div class="mt-4 h-3 overflow-hidden rounded-full bg-slate-200">
+                    <div
+                        class="h-full rounded-full transition-all duration-500 {{ $storageBarClass }}"
+                        style="width: {{ max(min($storageUsagePercent, 100), 0) }}%;"
+                    ></div>
+                </div>
+
+                <div class="mt-3 flex items-center justify-between text-xs font-semibold">
+                    <span class="text-slate-500">Terpakai {{ $storageUsagePercent }}%</span>
+                    <span class="text-slate-500">Sisa {{ $stats['disk_free_percent'] ?? 'N/A' }}%</span>
+                </div>
             </div>
+
             <div class="grid grid-cols-2 gap-3">
                 <div class="stat-tile">
                     <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">App files</p>
@@ -41,6 +54,7 @@
                     <p class="mt-2 text-xl font-semibold text-slate-900">{{ $formatBytes($stats['disk_total']) }}</p>
                 </div>
             </div>
+
             <div class="grid grid-cols-2 gap-3">
                 <div class="stat-tile">
                     <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Folders</p>
@@ -50,6 +64,15 @@
                     <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Files</p>
                     <p class="mt-2 text-xl font-semibold text-slate-900">{{ $stats['file_count'] }}</p>
                 </div>
+            </div>
+
+            <div class="rounded-2xl border px-4 py-4 {{ $storagePanelClass }}">
+                <p class="text-sm font-semibold {{ $storageTitleClass }}">
+                    {{ $storageState === 'critical' ? 'Warning merah' : ($storageState === 'warning' ? 'Storage menipis' : 'Storage sehat') }}
+                </p>
+                <p class="mt-2 text-sm leading-6 {{ $storageTextClass }}">
+                    {{ $storageMessage }}
+                </p>
             </div>
         </div>
     </section>
@@ -102,7 +125,7 @@
                         <div class="min-w-0">
                             <p class="truncate text-sm font-semibold text-slate-900">{{ $recentFile->name }}</p>
                             <p class="mt-1 truncate text-xs text-slate-500">
-                                {{ $recentFile->folder?->name ?? 'Root' }} • {{ $recentFile->created_at->diffForHumans() }}
+                                {{ $recentFile->folder?->name ?? 'Root' }} | {{ $recentFile->created_at->diffForHumans() }}
                             </p>
                         </div>
                         <a href="{{ route('drive.files.download', $recentFile) }}" class="badge-muted">

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\DriveFile;
+use App\Models\DriveFolder;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -83,5 +84,44 @@ class DriveTest extends TestCase
         $this->actingAs($otherUser)
             ->get(route('drive.files.download', $file))
             ->assertNotFound();
+    }
+
+    public function test_users_can_switch_to_largest_files_view_for_cleanup(): void
+    {
+        $user = User::factory()->create();
+
+        $folder = DriveFolder::create([
+            'user_id' => $user->id,
+            'parent_id' => null,
+            'name' => 'Archive',
+        ]);
+
+        DriveFile::create([
+            'user_id' => $user->id,
+            'drive_folder_id' => $folder->id,
+            'name' => 'small-note.txt',
+            'disk' => 'local',
+            'path' => 'drive/'.$user->id.'/small-note.txt',
+            'mime_type' => 'text/plain',
+            'extension' => 'txt',
+            'size' => 128,
+        ]);
+
+        DriveFile::create([
+            'user_id' => $user->id,
+            'drive_folder_id' => null,
+            'name' => 'big-video.mp4',
+            'disk' => 'local',
+            'path' => 'drive/'.$user->id.'/big-video.mp4',
+            'mime_type' => 'video/mp4',
+            'extension' => 'mp4',
+            'size' => 5_000_000,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('dashboard', ['file_view' => 'largest']))
+            ->assertOk()
+            ->assertSee('Largest Files')
+            ->assertSeeInOrder(['big-video.mp4', 'small-note.txt']);
     }
 }

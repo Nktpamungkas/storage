@@ -1,10 +1,31 @@
 <section class="surface-panel overflow-hidden">
-    <div class="flex items-center justify-between border-b border-slate-200/70 px-6 py-5">
+    <div class="flex flex-col gap-4 border-b border-slate-200/70 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
         <div>
-            <h3 class="text-lg font-semibold text-slate-900">Files</h3>
-            <p class="mt-1 text-sm text-slate-500">Semua file pada folder aktif, siap diunduh atau dirapikan.</p>
+            <h3 class="text-lg font-semibold text-slate-900">
+                {{ $fileView === 'largest' ? 'Largest Files' : 'Files' }}
+            </h3>
+            <p class="mt-1 text-sm text-slate-500">
+                {{ $fileView === 'largest'
+                    ? 'Mode cleanup untuk melihat file paling besar di seluruh akun kamu.'
+                    : 'Semua file pada folder aktif, siap diunduh atau dirapikan.' }}
+            </p>
         </div>
-        <span class="badge-muted">{{ $files->count() }}</span>
+
+        <div class="flex flex-wrap items-center justify-end gap-2">
+            <a
+                href="{{ $dashboardUrl($currentFolder?->id, ['search' => $search]) }}"
+                class="btn-secondary {{ $fileView === 'folder' ? '!border-sky-100 !bg-sky-50 !text-sky-700' : '' }}"
+            >
+                Folder files
+            </a>
+            <a
+                href="{{ $dashboardUrl($currentFolder?->id, ['file_view' => 'largest', 'search' => $search]) }}"
+                class="btn-secondary {{ $fileView === 'largest' ? '!border-sky-100 !bg-sky-50 !text-sky-700' : '' }}"
+            >
+                File terbesar
+            </a>
+            <span class="badge-muted">{{ $files->count() }}</span>
+        </div>
     </div>
 
     <div class="overflow-x-auto">
@@ -28,7 +49,9 @@
                                 </span>
                                 <div class="min-w-0">
                                     <p class="truncate font-semibold text-slate-900">{{ $file->name }}</p>
-                                    <p class="mt-1 text-xs text-slate-500">{{ $currentFolder?->name ?? 'Root' }}</p>
+                                    <p class="mt-1 text-xs text-slate-500">
+                                        {{ $fileView === 'largest' ? ($file->folder?->name ?? 'Root') : ($currentFolder?->name ?? 'Root') }}
+                                    </p>
                                 </div>
                             </div>
                         </td>
@@ -66,7 +89,9 @@
                 @empty
                     <tr>
                         <td colspan="5" class="px-6 py-14 text-center text-sm text-slate-500">
-                            Belum ada file di folder ini. Kamu bisa upload beberapa file sekaligus dari tombol di atas.
+                            {{ $fileView === 'largest'
+                                ? 'Belum ada file yang bisa ditampilkan untuk mode largest files.'
+                                : 'Belum ada file di folder ini. Kamu bisa upload beberapa file sekaligus dari tombol di atas.' }}
                         </td>
                     </tr>
                 @endforelse

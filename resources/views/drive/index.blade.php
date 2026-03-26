@@ -26,6 +26,33 @@
     };
 
     $currentRootId = $breadcrumbs->first()?->id;
+    $storageState = $stats['storage_state'] ?? 'normal';
+    $storageUsagePercent = $stats['disk_usage_percent'] ?? 0;
+    $storageBarClass = match ($storageState) {
+        'critical' => 'bg-rose-500',
+        'warning' => 'bg-amber-500',
+        default => 'bg-emerald-500',
+    };
+    $storagePanelClass = match ($storageState) {
+        'critical' => 'border-rose-200 bg-rose-50/90',
+        'warning' => 'border-amber-200 bg-amber-50/90',
+        default => 'border-emerald-200 bg-emerald-50/80',
+    };
+    $storageTitleClass = match ($storageState) {
+        'critical' => 'text-rose-800',
+        'warning' => 'text-amber-800',
+        default => 'text-emerald-800',
+    };
+    $storageTextClass = match ($storageState) {
+        'critical' => 'text-rose-700',
+        'warning' => 'text-amber-700',
+        default => 'text-emerald-700',
+    };
+    $storageMessage = match ($storageState) {
+        'critical' => 'Storage hampir habis. Hapus file besar secepatnya supaya upload baru tidak gagal.',
+        'warning' => 'Sisa storage mulai menipis. Waktunya cek file terbesar dan bersih-bersih.',
+        default => 'Kapasitas disk masih aman untuk upload dan kerja harian.',
+    };
 @endphp
 
 <x-app-layout>
